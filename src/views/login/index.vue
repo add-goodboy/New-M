@@ -4,14 +4,19 @@
     <van-nav-bar class="page-nav-bar" title="标题" />
     <!-- 导航栏 -->
     <!-- 登录表单 -->
-    <van-form @submit="onSubmit">
-      <van-field name="手机号" v-model="user.mobile" placeholder="请输入手机号"  type="number" maxlength="11" :rules="userFormRules.mobile">
+    <van-form ref="loginForm" @submit="onSubmit">
+      <van-field name="mobile" v-model="user.mobile" placeholder="请输入手机号" type="number" maxlength="11"
+                 :rules="userFormRules.mobile">
         <i slot="left-icon" class="iconfont iconshouji"></i>
       </van-field>
-      <van-field v-model="user.code" name="验证码" placeholder="请输入验证码" type="number" maxlength="6" :rules="userFormRules.code">
+      <van-field v-model="user.code" name="code" placeholder="请输入验证码" type="number" maxlength="6"
+                 :rules="userFormRules.code">
         <i slot="left-icon" class="iconfont iconyanzhengma"></i>
         <template #button>
-          <van-button class="send-sms-btn" round size="small" type="default">发送验证码</van-button>
+          <!-- 验证码倒计时组件 -->
+          <van-count-down v-if="isCountDownShow" :time="1000 * 5" format="ss s" @finish="isCountDownShow = false" />
+          <van-button v-else class="send-sms-btn" round size="small" native-type="button" @click="onSendSms"
+                      type="default">发送验证码</van-button>
         </template>
       </van-field>
       <div class="login-btn-wrap">
@@ -25,7 +30,7 @@
 </template>
 
 <script>
-import { login } from '@/api/user'
+import { login, sendSms } from '@/api/user'
 export default {
   name: 'LoginIndex',
   data () {
@@ -43,7 +48,8 @@ export default {
           { required: true, message: '验证码不能为空' },
           { pattern: /^\d{6}$/, message: '验证码格式错误' }
         ]
-      }
+      },
+      isCountDownShow: false
     }
   },
   methods: {
@@ -68,6 +74,29 @@ export default {
         } else {
           console.log('登陆失败', err.response)
           this.$toast.fail('登录失败')
+        }
+      }
+    },
+    async onSendSms () {
+      //  1.校验手机号 通过ref获取表单示例对象,通过name获取具体表单项
+      try {
+        await this.$refs.loginForm.validate('mobile')
+        this.$toast('发送成功')
+      } catch (err) {
+        return console.log('验证失败')
+      }
+      // 2.验证通过显示倒计时
+      this.isCountDownShow = true
+      // 3.请求发送验证码
+      try {
+        const res = await sendSms(this.user.mobile)
+        console.log(res)
+      } catch (err) {
+        this.isCountDownShow = false
+        if (err.response.status === 429) {
+          this.$toast('操作频繁,请稍候再试')
+        } else {
+          this.$toast('发送失败,请稍候再试')
         }
       }
     }
