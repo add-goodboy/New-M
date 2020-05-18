@@ -31,8 +31,8 @@ export default {
   data () {
     return {
       user: {
-        mobile: '', // 手机号
-        code: '' // 验证码
+        mobile: '13911111111', // 手机号
+        code: '246810' // 验证码
       }
     }
   },
@@ -41,15 +41,23 @@ export default {
       console.log('submit', values)
       // 获取表单数据
       const user = this.user
+
+      this.$toast.loading({
+        message: '登陆中...',
+        forbidClick: true
+      })
       // 提交表单请求登录
       try {
         const res = await login(user)
         console.log('登陆成功', res.data.data)
+        this.$toast.success('登陆成功')
       } catch (err) {
         if (err.response.status === 400) {
           console.log('手机号或验证码错误', err.response)
+          this.$toast.fail('手机号或验证码错误')
         } else {
           console.log('登陆失败', err.response)
+          this.$toast.fail('登录失败')
         }
       }
     }
