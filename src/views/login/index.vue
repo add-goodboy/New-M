@@ -64,8 +64,9 @@ export default {
       })
       // 提交表单请求登录
       try {
-        const res = await login(user)
-        console.log('登陆成功', res.data.data)
+        const { data } = await login(user)
+        // 将用户的token值传入Vuex中的state里
+        this.$store.commit('setUser', data.data)
         this.$toast.success('登陆成功')
       } catch (err) {
         if (err.response.status === 400) {
