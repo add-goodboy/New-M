@@ -1,8 +1,8 @@
 module.exports = {
   plugins: {
-    // autoprefixer: {
-    //   browsers: ['Android >= 4.0', 'iOS >= 8'],
-    // },
+    autoprefixer: {
+      browsers: ['Android >= 4.0', 'iOS >= 8']
+    },
     // postcss-pxtorem:将 px 转换为 rem
     'postcss-pxtorem': {
       // rootValue: 37.5,
