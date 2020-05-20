@@ -1,6 +1,5 @@
 <template>
   <div class="layout-container">
-    主体页面
     <!-- 底部 tabbar导航栏 -->
     <router-view />
     <van-tabbar class="layout-tabbar" route>
@@ -18,7 +17,7 @@
       </van-tabbar-item>
       <van-tabbar-item to="/my">
         <i slot="icon" class="iconfont iconwode"></i>
-        <span class="tabbar-text">我的</span>
+        <span class="tabbar-text">{{$store.state.user ? '我的' : '未登录'}}</span>
       </van-tabbar-item>
     </van-tabbar>
     <!-- 底部 tabbar导航栏 -->
