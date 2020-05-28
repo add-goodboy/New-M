@@ -13,19 +13,19 @@
       </div>
       <div class="data-stats">
         <div class="data-item">
-          <div class="count">10</div>
+          <div class="count">{{userInfo.art_count}}</div>
           <div class="text">头条</div>
         </div>
         <div class="data-item">
-          <div class="count">10</div>
+          <div class="count">{{userInfo.follow_count}}</div>
           <div class="text">关注</div>
         </div>
         <div class="data-item">
-          <div class="count">10</div>
+          <div class="count">{{userInfo.fans_count}}</div>
           <div class="text">粉丝</div>
         </div>
         <div class="data-item">
-          <div class="count">10</div>
+          <div class="count">{{userInfo.like_count}}</div>
           <div class="text">获赞</div>
         </div>
       </div>
@@ -55,14 +55,50 @@
     <!-- 导航 -->
     <van-cell title="消息通知" is-link />
     <van-cell title="皮皮同学" is-link />
-    <van-cell v-if="user" class="out-login" title="退出登录" />
+    <van-cell v-if="user" class="out-login" clickable @click="onLogin" title="退出登录" />
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import { getUserInfo } from '@/api/user'
 export default {
   name: 'MyIndex',
+  data () {
+    return {
+      userInfo: {} // 用户信息
+    }
+  },
+  created () {
+    // 检测用户是否是登录状态,如果是则请求用户信息
+    if (this.user) {
+      this.loadUserInfo()
+    }
+  },
+  methods: {
+    // 退出提示 点击确定后清除登录状态
+    onLogin () {
+      this.$dialog.confirm({
+        title: '确定退出吗'
+      })
+        .then(() => {
+          // 将vuex里面的setUser数据变为空
+          this.$store.commit('setUser', null)
+        })
+        .catch(() => {
+          // on cancel
+        })
+    },
+    async loadUserInfo () {
+      try {
+        const { data } = await getUserInfo()
+        console.log(data)
+        this.userInfo = data.data
+      } catch (err) {
+        this.$toast('获取用户信息失败,清稍候再试')
+      }
+    }
+  },
   computed: {
     ...mapState(['user'])
   }
