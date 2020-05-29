@@ -5,27 +5,46 @@
       <van-button class="top-button" slot="title" round icon="search" size="small" type="info">搜索</van-button>
     </van-nav-bar>
     <!-- 导航栏 -->
+    <!-- 频道列表 -->
     <van-tabs class="home-tab" v-model="active" animated swipeable>
-      <van-tab title="标签 1">内容 1</van-tab>
-      <van-tab title="标签 2">内容 2</van-tab>
-      <van-tab title="标签 3">内容 3</van-tab>
-      <van-tab title="标签 4">内容 4</van-tab>
-      <van-tab title="标签 3">内容 3</van-tab>
-      <van-tab title="标签 4">内容 4</van-tab>
+      <van-tab :title="item.name" v-for="item in channels" :key="item.id">
+        <articles-list :item="item" />
+      </van-tab>
       <div class="placeholder" slot="nav-right"></div>
       <div class="right-btn" slot="nav-right">
         <i class="iconfont icongengduo"></i>
       </div>
     </van-tabs>
+    <!-- 频道列表 -->
   </div>
 </template>
 
 <script>
+import { getUserChannels } from '@/api/user'
+import ArticlesList from './components/articles-list'
 export default {
   name: 'HomeIndex',
+  components: {
+    ArticlesList
+  },
   data () {
     return {
-      active: 0
+      active: 0,
+      channels: []
+    }
+  },
+  created () {
+    this.loadChannels()
+  },
+  methods: {
+    async loadChannels () {
+      try {
+        const { data } = await getUserChannels()
+        this.channels = data.data.channels
+        console.log(this.channels)
+      } catch (err) {
+        this.$toast('获取用户频道信息失败')
+      }
     }
   }
 }
@@ -33,6 +52,7 @@ export default {
 
 <style lang="less">
 .home-container {
+  padding-bottom: 100px;
   .van-nav-bar__title {
     max-width: unset;
   }
@@ -73,7 +93,7 @@ export default {
     background-color: #3296fa;
   }
   .placeholder {
-    flex-shrink:0;
+    flex-shrink: 0;
     width: 66px;
     height: 82px;
   }
