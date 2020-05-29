@@ -12,6 +12,10 @@
       <van-tab title="标签 4">内容 4</van-tab>
       <van-tab title="标签 3">内容 3</van-tab>
       <van-tab title="标签 4">内容 4</van-tab>
+      <div class="placeholder" slot="nav-right"></div>
+      <div class="right-btn" slot="nav-right">
+        <i class="iconfont icongengduo"></i>
+      </div>
     </van-tabs>
   </div>
 </template>
@@ -67,6 +71,34 @@ export default {
     width: 30px !important;
     height: 6px;
     background-color: #3296fa;
+  }
+  .placeholder {
+    flex-shrink:0;
+    width: 66px;
+    height: 82px;
+  }
+  .right-btn {
+    position: fixed;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 66px;
+    height: 82px;
+    background-color: #fff;
+    opacity: 0.902;
+    i .iconfont {
+      font-size: 33px;
+    }
+    &:before {
+      content: '';
+      position: absolute;
+      left: 0;
+      width: 1px;
+      height: 100%;
+      background-image: url(~@/assets/gradient-gray-line.png);
+      background-size: contain;
+    }
   }
 }
 </style>
